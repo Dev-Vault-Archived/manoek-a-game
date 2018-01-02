@@ -104,13 +104,17 @@ struct Branch {
 
     void setLive() { live = 1; }
     void removeElement() { live = 0; }
-    void draw() {
-        setLive();
-        pos.x = WIDTH + 10;
+    void draw() { setLive(); pos.x = WIDTH + 10; }
+    void drawBranch() {
+        draw();
         if(rand()%2 == 0)
             pos.y = 0 - rand()%200 - 100;
         else
             pos.y = 0 + rand()%200 + 100;
+    }
+    void drawBoost() {
+        draw();
+        pos.y = rand()%(HEIGHT-200) + 100;
     }
 
     Image       sprites;
@@ -157,12 +161,23 @@ struct Pappu {
             onPullTimer = 0;
         }
     }
-    void checkOllication(Branch Branchs[]) {
+    bool ollicationCheck(Element A, Image B) {
+        if(!(pos.x + spriteW < A.x || A.x + B.W < pos.x || pos.y + spriteW < A.y || A.y + B.H < pos.y) || pos.y + spriteH < 0 || pos.y > HEIGHT) {
+            return true;
+        } else return false;
+    }
+    void checkOllication(Branch Branchs[], Branch &BoostItem) {
         for(int i = 0; i < 3; i++) {
             if(Branchs[i].live) {
-                if(!(pos.x + spriteW < Branchs[i].pos.x || Branchs[i].pos.x + Branchs[i].sprites.W < pos.x || pos.y + spriteW < Branchs[i].pos.y || Branchs[i].pos.y + Branchs[i].sprites.H < pos.y) || pos.y + spriteH < 0 || pos.y > HEIGHT) {
+                if(ollicationCheck(Branchs[i].pos, Branchs[i].sprites)) {
                     (*Container).stateGameover(); // kalo nyentuh ya mati deng
                 }
+            }
+        }
+        if(BoostItem.live) {
+            if(ollicationCheck(BoostItem.pos, BoostItem.sprites)) {
+                BoostItem.removeElement();
+                (*Container).score_multiplexer++;
             }
         }
     }

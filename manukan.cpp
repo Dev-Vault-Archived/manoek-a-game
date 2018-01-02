@@ -124,7 +124,18 @@ void as_branch_updater(Game Container, Branch BC[]) {
         }
     }
 }
+void as_boost_updater(Game Container, Branch &BC) {
+    int speedometers = Container.currentSpeed;
 
+    if(Container.isScoreAdded())
+        speedometers += Container.score / Container.acceleration_perscore * Container.acceleration;
+
+    if(BC.live) {
+        BC.pos.x += BC.pos.velX * BC.pos.dirX * speedometers;
+        if(BC.pos.x + BC.sprites.W < 0 - BC.sprites.W)
+            BC.removeElement();
+    }
+}
 void as_branch_drawer(Branch BC[]) {
     int lastLive = 0;
     int lastLive_index = 0;
@@ -139,14 +150,23 @@ void as_branch_drawer(Branch BC[]) {
     }
     if(noLife) {
         // jika ga ada yang hidup, hidupkan di index 0
-        BC[0].draw();
+        BC[0].drawBranch();
     } else {
         // ada yang live, cek lastLive
         // telah berjalan berapa lama gitu
         if(WIDTH - lastLive > 600 + rand()%100) {
             if(lastLive_index == 2)
-                BC[0].draw();
-            else BC[lastLive_index + 1].draw();
+                BC[0].drawBranch();
+            else BC[lastLive_index + 1].drawBranch();
+        }
+    }
+}
+void as_boost_drawer(Branch &BC) {
+    if(BC.live) {
+        as_element_drawer<Branch>(BC);
+    } else {
+        if(rand()%rand()%500 == 0) {
+            BC.drawBoost();
         }
     }
 }
@@ -255,6 +275,10 @@ int al_game_container(Game Container) {
         Branchs[i] = as_element_initialize<Branch>(WIDTH + 10, 0, 31, 500, 3, 0, -1, 0, "branch.png", "@", 0);
     }
 
+    // craete boost item
+    Branch BoostItems;
+    BoostItems = as_element_initialize<Branch>(WIDTH + 10, 0, 32, 32, 3, 0, -1, 0, "apple.png", "@_scoremux", 0);
+
     ALLEGRO_FONT *font18 = al_load_font(FONT_CALIBRI, 18, 0);
 
     // audio start
@@ -294,6 +318,8 @@ int al_game_container(Game Container) {
                     case ALLEGRO_KEY_SPACE:
                         switch(Container.state) {
                             case 1: // waiting screen
+                                srand(time(NULL));
+                                Container.score_multiplexer = 1;
                                 Container.state = 2; // make playing
                             break;
                             case 3: // game over
@@ -334,6 +360,7 @@ int al_game_container(Game Container) {
                         // reset position
                         PappuConnect.pos.resetPosition();
 
+                        BoostItems.pos.stopScrolling();
                         for(int i = 0; i < MAX_BRANCH; i++) {
                             Branchs[i].live = 0;
                             Branchs[i].pos.stopScrolling();
@@ -341,6 +368,7 @@ int al_game_container(Game Container) {
                     break;
                     case 2:
                         background_container.restartAll();
+                        BoostItems.pos.startScrolling();
                         for(int i = 0; i < MAX_BRANCH; i++) {
                             Branchs[i].pos.startScrolling();
                         }
@@ -349,6 +377,7 @@ int al_game_container(Game Container) {
                     case 3:
                         PappuConnect.forceAnimation = 0;
 
+                        BoostItems.pos.stopScrolling();
                         background_container.stopAllExcept(except, 1);
                         for(int i = 0; i < MAX_BRANCH; i++) {
                             Branchs[i].pos.stopScrolling();
@@ -359,9 +388,10 @@ int al_game_container(Game Container) {
 
                 as_background_updater(Container, background_container);
                 as_branch_updater(Container, Branchs);
+                as_boost_updater(Container, BoostItems);
 
                 PappuConnect.animation();
-                PappuConnect.checkOllication(Branchs);
+                PappuConnect.checkOllication(Branchs, BoostItems);
             break;
         }
 
@@ -375,7 +405,10 @@ int al_game_container(Game Container) {
 
             background_container.drawBackground(draw1, 5);
             as_branch_drawer(Branchs);
+            as_boost_drawer(BoostItems);
             background_container.drawBackground(draw2, 1);
+
+            char mult[] = {""};
 
             switch(Container.state) {
                 case 1:
@@ -383,7 +416,10 @@ int al_game_container(Game Container) {
                     al_draw_textf(font18, al_map_rgb(255, 255, 255), WIDTH/2, HEIGHT/2 + 60, ALLEGRO_ALIGN_CENTRE, "High Score: %d", (int)Container.highScore);
                 break;
                 case 2:
-                    al_draw_textf(font18, al_map_rgb(255, 255, 255), 5, 5, 0, "Score: %d", (int)Container.score);
+                    if(Container.score_multiplexer > 1) {
+                        sprintf(mult, "x%d", (int)Container.score_multiplexer);
+                    }
+                    al_draw_textf(font18, al_map_rgb(255, 255, 255), 5, 5, 0, "Score: %d %s", (int)Container.score, mult);
                 break;
                 case 3:
                     background_container.drawBackground(drawGameOver, 1);
