@@ -4,3 +4,4 @@ build/
 Manukan
 cmake-build-debug/
 .idea/
+allegro/
