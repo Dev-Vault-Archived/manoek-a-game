@@ -64,6 +64,7 @@ struct Image {
 struct Game {
     int     state;
     float   score,
+            last_score = 0,
             highScore = 0;
     float   currentSpeed,
             acceleration,
@@ -86,6 +87,7 @@ struct Game {
     void stateGameover() {
         state = 3;
         if(score > highScore) highScore = score;
+        last_score = score;
         score = 0;
     }
     void addScore() {
