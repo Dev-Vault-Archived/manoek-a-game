@@ -4,7 +4,7 @@ int al_game_container(Game Container);
 
 void as_background_updater(Game Container, BackgroundContainer &BC) {
     int speedometers = Container.currentSpeed;
-    
+
     if(Container.isScoreAdded())
         speedometers += pow(Container.acceleration * (Container.score / Container.acceleration_perscore), 2);
 
@@ -81,14 +81,14 @@ void as_boost_drawer(Branch &BC) {
 int main(int argc, char **argv) {
 
     srand(time(NULL));
-    
+
     Game PappuPakia; // create game container
 
     PappuPakia.state = 1;
     PappuPakia.score = 0;
     PappuPakia.currentSpeed = 1;
     PappuPakia.acceleration = 0.02;
-    PappuPakia.acceleration_perscore = 5;
+    PappuPakia.acceleration_perscore = 2;
     PappuPakia.score_increment = 1;
     PappuPakia.score_multiplexer = 1;
 
@@ -119,7 +119,7 @@ int al_game_container(Game Container) {
     ALLEGRO_TIMER *timer;
 
     if(!al_init()) return -1; // if failed to initialize
-    
+
     ALLEGRO_DISPLAY *display = al_create_display(WIDTH, HEIGHT); // create a display
 
     if(!display) return -1; // if display cannot
@@ -130,49 +130,49 @@ int al_game_container(Game Container) {
     BackgroundContainer background_container;
     // loading all background image and others resource
     background_container.addBackground(
-        as_element_initialize<Background>(
-            0, 0, 1000, 500, 0, 0, 0, 0, "bg_combined.png", "@_back"
-        )
+            as_element_initialize<Background>(
+                    0, 0, 1000, 500, 0, 0, 0, 0, "bg_combined.png", "@_back"
+            )
     );
     background_container.addBackground(
-        as_element_initialize<Background>(
-            0, 0, 1000, 500, 1.5, 0, -1, 0, "clouds.png", "@_clouds"
-        )
+            as_element_initialize<Background>(
+                    0, 0, 1000, 500, 1.5, 0, -1, 0, "clouds.png", "@_clouds"
+            )
     );
     background_container.addBackground(
-        as_element_initialize<Background>(
-            0, 0, 1000, 500, 1.875, 0, -1, 0, "back_trees.png", "@_backtrees"
-        )
+            as_element_initialize<Background>(
+                    0, 0, 1000, 500, 1.875, 0, -1, 0, "back_trees.png", "@_backtrees"
+            )
     );
     background_container.addBackground(
-        as_element_initialize<Background>(
-            0, 0, 1000, 500, 2.25, 0, -1, 0, "front_trees.png", "@_fronttrees"
-        )
+            as_element_initialize<Background>(
+                    0, 0, 1000, 500, 2.25, 0, -1, 0, "front_trees.png", "@_fronttrees"
+            )
     );
     background_container.addBackground(
-        as_element_initialize<Background>(
-            0, 0, 1000, 500, 3, 0, -1, 0, "ground.png", "@_ground"
-        )
+            as_element_initialize<Background>(
+                    0, 0, 1000, 500, 3, 0, -1, 0, "ground.png", "@_ground"
+            )
     );
     background_container.addBackground(
-        as_element_initialize<Background>(
-            40, 335, 71, 119, 3, 0, -1, 0, "log.png", "@_log", 0
-        )
+            as_element_initialize<Background>(
+                    40, 335, 71, 119, 3, 0, -1, 0, "log.png", "@_log", 0
+            )
     );
     background_container.addBackground(
-        as_element_initialize<Background>(
-            0, 0, 1000, 500, 0, 0, 0, 0, "splash.png", "@_splash"
-        )
+            as_element_initialize<Background>(
+                    0, 0, 1000, 500, 0, 0, 0, 0, "splash.png", "@_splash"
+            )
     );
     background_container.addBackground(
-        as_element_initialize<Background>(
-            0, 0, 1000, 500, 0, 0, 0, 0, "game_over.png", "@_gameover"
-        )
+            as_element_initialize<Background>(
+                    0, 0, 1000, 500, 0, 0, 0, 0, "game_over.png", "@_gameover"
+            )
     );
     background_container.addBackground(
-        as_element_initialize<Background>(
-            0, 0, 1000, 500, 0, 0, 0, 0, "key_up.png", "@_keyup"
-        )
+            as_element_initialize<Background>(
+                    0, 0, 1000, 500, 0, 0, 0, 0, "key_up.png", "@_keyup"
+            )
     );
     Pappu PappuConnect = as_element_initialize<Pappu>(40, 295, 60, 480, 0, 0, 0, 0, "pappu.png");
     PappuConnect.Container = &Container;
@@ -193,7 +193,7 @@ int al_game_container(Game Container) {
 
     ALLEGRO_SAMPLE_INSTANCE *music_loop = al_create_sample_instance(al_load_sample("sound/loop.ogg"));
     ALLEGRO_SAMPLE_INSTANCE *on_jump = al_create_sample_instance(al_load_sample("sound/flap.ogg"));
-    
+
     al_set_sample_instance_playmode(music_loop, ALLEGRO_PLAYMODE_LOOP);
 
     al_attach_sample_instance_to_mixer(music_loop, al_get_default_mixer());
@@ -206,6 +206,7 @@ int al_game_container(Game Container) {
     int timer_counter = 0;
 
     al_register_event_source(eq, al_get_keyboard_event_source());
+    al_register_event_source(eq, al_get_display_event_source(display));
     al_register_event_source(eq, al_get_timer_event_source(timer));
 
     al_play_sample_instance(music_loop);
@@ -221,28 +222,32 @@ int al_game_container(Game Container) {
                 switch(ev.keyboard.keycode) {
                     case ALLEGRO_KEY_ESCAPE:
                         Container.exitGame(); // exit game
-                    break;
+                        break;
                     case ALLEGRO_KEY_SPACE:
                         switch(Container.state) {
                             case 1: // waiting screen
                                 srand(time(NULL));
                                 Container.score_multiplexer = 1;
                                 Container.state = 2; // make playing
-                            break;
+                                break;
                             case 3: // game over
                                 Container.state = 1; // back to waiting screen
-                            break;
+                                break;
                         }
-                    break;
+                        break;
                     case ALLEGRO_KEY_UP:
                         // only pull when playing
                         if(Container.isPlaying()) {
                             al_play_sample_instance(on_jump); // play sound
                             PappuConnect.pull(); // pull up
                         }
-                    break;
+                        break;
                 }
-            break;
+                break;
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                //close window
+                Container.exitGame();
+                break;
             case ALLEGRO_EVENT_TIMER:
                 Container.redrawState(); // change draw state
                 // if playing
@@ -261,7 +266,7 @@ int al_game_container(Game Container) {
                         PappuConnect.forceAnimation = 0;
 
                         // stop all scrolling background except 
-                
+
                         background_container.stopAllExcept(except, 1);
                         background_container.resetPosition(reset, 1);
                         // reset position
@@ -272,7 +277,7 @@ int al_game_container(Game Container) {
                             Branchs[i].live = 0;
                             Branchs[i].pos.stopScrolling();
                         }
-                    break;
+                        break;
                     case 2:
                         background_container.restartAll();
                         BoostItems.pos.startScrolling();
@@ -280,7 +285,7 @@ int al_game_container(Game Container) {
                             Branchs[i].pos.startScrolling();
                         }
                         PappuConnect.updateGravity();
-                    break;
+                        break;
                     case 3:
                         PappuConnect.forceAnimation = 0;
 
@@ -290,7 +295,7 @@ int al_game_container(Game Container) {
                             Branchs[i].pos.stopScrolling();
                         }
                         PappuConnect.updateGravity();
-                    break;
+                        break;
                 }
 
                 as_background_updater(Container, background_container);
@@ -299,7 +304,7 @@ int al_game_container(Game Container) {
 
                 PappuConnect.animation();
                 PappuConnect.checkOllication(Branchs, BoostItems);
-            break;
+                break;
         }
 
         if(Container.isRedraw() && al_is_event_queue_empty(eq)) {
@@ -321,21 +326,21 @@ int al_game_container(Game Container) {
                 case 1:
                     background_container.drawBackground(drawSplash, 2);
                     al_draw_textf(font18, al_map_rgb(255, 255, 255), WIDTH/2, HEIGHT/2 + 60, ALLEGRO_ALIGN_CENTRE, "High Score: %d", (int)Container.highScore);
-                break;
+                    break;
                 case 2:
                     if(Container.score_multiplexer > 1) {
                         sprintf(mult, "x%d", (int)Container.score_multiplexer);
                     }
                     al_draw_textf(font18, al_map_rgb(255, 255, 255), 5, 5, 0, "Score: %d %s", (int)Container.score, mult);
-                break;
+                    break;
                 case 3:
                     background_container.drawBackground(drawGameOver, 1);
                     al_draw_textf(font18, al_map_rgb(255, 255, 255), WIDTH/2, HEIGHT/2 + 60, ALLEGRO_ALIGN_CENTRE, "Your Score: %d %s", (int)Container.score, mult);
-                break;
+                    break;
             }
 
             as_element_drawer_animation<Pappu>(PappuConnect);
-            
+
             al_flip_display();
             al_clear_to_color(al_map_rgb(0, 0, 0));
         }
