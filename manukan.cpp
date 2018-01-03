@@ -273,6 +273,7 @@ int al_game_container(Game Container) {
                         // reset position
                         PappuConnect.pos.resetPosition();
 
+                        BoostItems.live = 0;
                         BoostItems.pos.stopScrolling();
                         for(int i = 0; i < MAX_BRANCH; i++) {
                             Branchs[i].live = 0;
