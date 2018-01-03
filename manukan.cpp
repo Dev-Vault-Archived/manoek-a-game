@@ -184,7 +184,7 @@ int al_game_container(Game Container) {
 
     // craete boost item
     Branch BoostItems;
-    BoostItems = as_element_initialize<Branch>(WIDTH + 10, 0, 32, 32, 3, 0, -1, 0, "apple.png", "@_scoremux", 0);
+    BoostItems = as_element_initialize<Branch>(WIDTH + 10, 0, 32, 32, 3, 0, -1, 0, "coin.png", "@_scoremux", 0);
 
     ALLEGRO_FONT *font18 = al_load_font(FONT_CALIBRI, 18, 0);
 
