@@ -422,6 +422,7 @@ int al_game_container(Game Container) {
                 break;
                 case 3:
                     background_container.drawBackground(drawGameOver, 1);
+                    al_draw_textf(font18, al_map_rgb(255, 255, 255), WIDTH/2, HEIGHT/2 + 60, ALLEGRO_ALIGN_CENTRE, "Your Score: %d %s", (int)Container.score, mult);
                 break;
             }
 
