@@ -165,7 +165,7 @@ void as_boost_drawer(Branch &BC) {
     if(BC.live) {
         as_element_drawer<Branch>(BC);
     } else {
-        if(rand()%rand()%500 == 0) {
+        if(rand()%rand()%1000 == 0) {
             BC.drawBoost();
         }
     }
