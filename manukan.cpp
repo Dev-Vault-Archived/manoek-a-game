@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
     PappuPakia.score = 0;
     PappuPakia.currentSpeed = 1;
     PappuPakia.acceleration = 0.02;
-    PappuPakia.acceleration_perscore = 2;
+    PappuPakia.acceleration_perscore = 5;
     PappuPakia.score_increment = 1;
     PappuPakia.score_multiplexer = 1;
 
