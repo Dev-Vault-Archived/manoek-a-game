@@ -124,6 +124,7 @@ int al_game_container(Game Container) {
 
     if(!display) return -1; // if display cannot
 
+    al_set_window_title(display, "Manukan Bird - Game of Student");
     al_initialize_plugin();
     al_production_resourec_state();
 
