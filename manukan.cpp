@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
 
     Game PappuPakia; // create game container
 
-    PappuPakia.state = 1;
+    PappuPakia.state = 4;
     PappuPakia.score = 0;
     PappuPakia.currentSpeed = 1;
     PappuPakia.acceleration = 0.02;
@@ -176,6 +176,12 @@ int al_game_container(Game Container) {
                     0, 0, 1000, 500, 0, 0, 0, 0, "key_up.png", "@_keyup"
             )
     );
+    background_container.addBackground(
+            as_element_initialize<Background>(
+                    0, 0, 1000, 500, 0, 0, 0, 0, "plash.png", "@_flash", 0
+            )
+    );
+
     Pappu PappuConnect = as_element_initialize<Pappu>(40, 295, 60, 480, 0, 0, 0, 0, "pappu.png");
     PappuConnect.Container = &Container;
 
@@ -207,6 +213,7 @@ int al_game_container(Game Container) {
     timer = al_create_timer(1.0 / FPS);
 
     int timer_counter = 0;
+    int game_running_time = 0;
 
     al_register_event_source(eq, al_get_keyboard_event_source());
     al_register_event_source(eq, al_get_display_event_source(display));
@@ -255,11 +262,14 @@ int al_game_container(Game Container) {
                 Container.redrawState(); // change draw state
                 // if playing
                 if(Container.isPlaying()) {
-                    if(++timer_counter == FPS) {
+                    if(++timer_counter%FPS == 0) {
                         Container.addScore(); // add score every second
                         timer_counter = 0;
                     }
                 }
+
+                game_running_time++; // add timer
+
                 const char *except[] = {"@_clouds"};
                 const char *reset[] = {"@_log"};
                 switch(Container.state) {
@@ -300,6 +310,9 @@ int al_game_container(Game Container) {
                         }
                         PappuConnect.updateGravity();
                         break;
+                    case 4:
+                        if(game_running_time%(FPS*5) == 0) Container.state = 1;
+                        break;
                 }
 
                 as_background_updater(Container, background_container);
@@ -320,11 +333,14 @@ int al_game_container(Game Container) {
             const char *draw2[] = {"@_ground"};
             const char *drawSplash[] = {"@_splash", "@_keyup"};
             const char *drawGameOver[] = {"@_gameover"};
+            const char *drawLoading[] = {"@_flash"};
 
-            background_container.drawBackground(draw1, 5);
-            as_branch_drawer(Branchs);
-            as_boost_drawer(BoostItems);
-            background_container.drawBackground(draw2, 1);
+            if(Container.state != 4) {
+                background_container.drawBackground(draw1, 5);
+                as_branch_drawer(Branchs);
+                as_boost_drawer(BoostItems);
+                background_container.drawBackground(draw2, 1);
+            }
 
             char mult[] = {""};
 
@@ -343,9 +359,14 @@ int al_game_container(Game Container) {
                     background_container.drawBackground(drawGameOver, 1);
                     al_draw_textf(font18, al_map_rgb(255, 255, 255), WIDTH/2, HEIGHT/2 + 60, ALLEGRO_ALIGN_CENTRE, "Your Score: %d", (int)Container.last_score);
                     break;
+                case 4:
+                    background_container.drawBackground(drawLoading, 1);
+                    break;
             }
 
-            as_element_drawer_animation<Pappu>(PappuConnect);
+            if(Container.state != 4) {
+                as_element_drawer_animation<Pappu>(PappuConnect);
+            }
 
             al_flip_display();
             al_clear_to_color(al_map_rgb(0, 0, 0));
