@@ -4,9 +4,8 @@ struct BackgroundContainer {
 
     void addBackground(Background B) { Backgrounds[size++] = B; }
     void destroyAll() {
-        for(int i = 0; i < size; i++) {
+        for(int i = 0; i < size; i++)
             Backgrounds[i].sprites.destroy();
-        }
     }
     void stopAllExcept(const char *ex[], int s) {
         for(int i = 0; i < size; i++){
@@ -22,9 +21,8 @@ struct BackgroundContainer {
         }
     }
     void restartAll() {
-        for(int i = 0; i < size; i++) {
+        for(int i = 0; i < size; i++)
             Backgrounds[i].pos.startScrolling();
-        }
     }
     void resetPosition(const char *reset[], int s) {
         for(int i = 0; i < size; i++) {
