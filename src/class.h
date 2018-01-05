@@ -71,6 +71,7 @@ struct Game {
             acceleration_perscore;
     int     elapsed_before = 0,
             elapsed = 0;
+    int     soundActive = 0;
     float   score_increment = 1,
             score_multiplexer = 1;
     bool    isWindowRedraw = false,
@@ -137,7 +138,6 @@ struct Pappu {
             animationColums = 1,
             animationDirection = 1;
     int     forceAnimation = 4; // force animasi aja
-    int     soundActive = 0;
     int     onPull = 0, // variabel gravity
             pullWeightUp = 2,
             onPullTimer = 0,
