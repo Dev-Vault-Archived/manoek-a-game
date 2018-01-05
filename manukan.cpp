@@ -192,17 +192,15 @@ int al_game_container(Game Container) {
     ALLEGRO_FONT *font18 = al_load_font(FONT_CALIBRI, 18, 0);
 
     // audio start
-    if(Container.soundActive){
-        al_reserve_samples(2);
+    al_reserve_samples(2);
 
-        ALLEGRO_SAMPLE_INSTANCE *music_loop = al_create_sample_instance(al_load_sample("sound/loop.ogg"));
-        ALLEGRO_SAMPLE_INSTANCE *on_jump = al_create_sample_instance(al_load_sample("sound/flap.ogg"));
+    ALLEGRO_SAMPLE_INSTANCE *music_loop = al_create_sample_instance(al_load_sample("sound/loop.ogg"));
+    ALLEGRO_SAMPLE_INSTANCE *on_jump = al_create_sample_instance(al_load_sample("sound/flap.ogg"));
 
-        al_set_sample_instance_playmode(music_loop, ALLEGRO_PLAYMODE_LOOP);
+    al_set_sample_instance_playmode(music_loop, ALLEGRO_PLAYMODE_LOOP);
 
-        al_attach_sample_instance_to_mixer(music_loop, al_get_default_mixer());
-        al_attach_sample_instance_to_mixer(on_jump, al_get_default_mixer());
-    }
+    al_attach_sample_instance_to_mixer(music_loop, al_get_default_mixer());
+    al_attach_sample_instance_to_mixer(on_jump, al_get_default_mixer());
     // end audio setting
 
     eq = al_create_event_queue();
