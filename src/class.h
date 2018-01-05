@@ -14,16 +14,10 @@ struct Element {
                     dirY_temp;
     float           velX,
                     velY;
-    std::string     id;
+    std::string     id; // id for every resource
 
-    void resetPosition() { // reset element position to initial
-        x = x_temp;
-        y = y_temp;
-    }
-    void setPosition(float tx, float ty) { // set position
-        x = x + tx;
-        y = y + ty;
-    }
+    void resetPosition() { x = x_temp; y = y_temp; } // reset element position to initial
+    void setPosition(float tx, float ty) { x = x + tx; y = y + ty; } // set position
     void startScrolling() { // start scroll
         if(dirX_temp != 0) { // when have temp dirX
             dirX = dirX_temp;
@@ -37,16 +31,12 @@ struct Element {
         }
     }
     void setVelocity(float tvelX, float tvelY, int tdirX, int tdirY) { // set velocity
-        velX = tvelX;
-        velY = tvelY;
-        dirX = tdirX;
-        dirY = tdirY;
+        velX = tvelX; velY = tvelY;
+        dirX = tdirX; dirY = tdirY;
     }
     void initialize(float tx, float ty, float tvelX = 0, float tvelY = 0, int tdirX = 0, int tdirY = 0) { // iniitalize element
-        x_temp = tx;
-        y_temp = ty;
-        dirX_temp = 0;
-        dirY_temp = 0;
+        x_temp = tx; dirX_temp = 0;
+        y_temp = ty; dirY_temp = 0;
         setPosition(tx, ty);
         setVelocity(tvelX, tvelY, tdirX, tdirY);
     }
@@ -111,10 +101,8 @@ struct Branch {
     void draw() { setLive(); pos.x = WIDTH + 10; }
     void drawBranch() {
         draw();
-        if(rand()%2 == 0)
-            pos.y = 0 - rand()%200 - 100;
-        else
-            pos.y = 0 + rand()%200 + 100;
+        if(rand()%2 == 0) pos.y = 0 - rand()%200 - 100;
+        else pos.y = 0 + rand()%200 + 100;
     }
     void drawBoost() {
         draw();
@@ -157,8 +145,7 @@ struct Pappu {
             }
         } else curFrame = forceAnimation % maxFrame; // ini lock animasi
 
-        if(onPull && ++onPullTimer < onPullDelay && onPullTimer%2 == 0) // pokonya gitu :v
-            pos.y -= pullWeightUp;
+        if(onPull && ++onPullTimer < onPullDelay && onPullTimer%2 == 0) pos.y -= pullWeightUp; // pokonya gitu :v
         else if(onPullTimer >= onPullDelay) { // hahwhahwha, lupa w
             onPull = 0;
             forceAnimation = 4;
@@ -166,17 +153,13 @@ struct Pappu {
         }
     }
     bool ollicationCheck(Element A, Image B) {
-        if(!(pos.x + spriteW < A.x || A.x + B.W < pos.x || pos.y + spriteW < A.y || A.y + B.H < pos.y) || pos.y + spriteH < 0 || pos.y > HEIGHT) {
-            return true;
-        } else return false;
+        if(!(pos.x + spriteW < A.x || A.x + B.W < pos.x || pos.y + spriteW < A.y || A.y + B.H < pos.y) || pos.y + spriteH < 0 || pos.y > HEIGHT) return true;
+        else return false;
     }
     void checkOllication(Branch Branchs[], Branch &BoostItem) {
         for(int i = 0; i < 3; i++) {
-            if(Branchs[i].live) {
-                if(ollicationCheck(Branchs[i].pos, Branchs[i].sprites)) {
-                    (*Container).stateGameover(); // kalo nyentuh ya mati deng
-                }
-            }
+            if(Branchs[i].live)
+                if(ollicationCheck(Branchs[i].pos, Branchs[i].sprites)) (*Container).stateGameover(); // kalo nyentuh ya mati deng
         }
         if(BoostItem.live) {
             if(ollicationCheck(BoostItem.pos, BoostItem.sprites)) {
@@ -186,13 +169,10 @@ struct Pappu {
         }
     }
     void pull() {
-        onPull = 1;
-        forceAnimation = 0;
-        onPullTimer = 0;
+        onPull = 1; forceAnimation = 0; onPullTimer = 0;
     }
     void updateGravity() {
-        if(!onPull)
-            pos.y += gravity;
+        if(!onPull) pos.y += gravity; // add gravity (fall down)
         if((*Container).state == 3) { // burung falldown
             pos.y += gravity * 2; // gravity 2x
             onPullDelay = 600; // just set 600/120 second
