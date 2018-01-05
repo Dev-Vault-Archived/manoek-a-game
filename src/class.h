@@ -137,6 +137,7 @@ struct Pappu {
             animationColums = 1,
             animationDirection = 1;
     int     forceAnimation = 4; // force animasi aja
+    int     soundActive = 0;
     int     onPull = 0, // variabel gravity
             pullWeightUp = 2,
             onPullTimer = 0,

@@ -91,6 +91,7 @@ int main(int argc, char **argv) {
     PappuPakia.acceleration_perscore = 6;
     PappuPakia.score_increment = 1;
     PappuPakia.score_multiplexer = 1;
+    PappuPakia.soundActive = 1;
 
     al_game_container(PappuPakia);
 
@@ -191,15 +192,17 @@ int al_game_container(Game Container) {
     ALLEGRO_FONT *font18 = al_load_font(FONT_CALIBRI, 18, 0);
 
     // audio start
-    al_reserve_samples(2);
+    if(Container.soundActive){
+        al_reserve_samples(2);
 
-    ALLEGRO_SAMPLE_INSTANCE *music_loop = al_create_sample_instance(al_load_sample("sound/loop.ogg"));
-    ALLEGRO_SAMPLE_INSTANCE *on_jump = al_create_sample_instance(al_load_sample("sound/flap.ogg"));
+        ALLEGRO_SAMPLE_INSTANCE *music_loop = al_create_sample_instance(al_load_sample("sound/loop.ogg"));
+        ALLEGRO_SAMPLE_INSTANCE *on_jump = al_create_sample_instance(al_load_sample("sound/flap.ogg"));
 
-    al_set_sample_instance_playmode(music_loop, ALLEGRO_PLAYMODE_LOOP);
+        al_set_sample_instance_playmode(music_loop, ALLEGRO_PLAYMODE_LOOP);
 
-    al_attach_sample_instance_to_mixer(music_loop, al_get_default_mixer());
-    al_attach_sample_instance_to_mixer(on_jump, al_get_default_mixer());
+        al_attach_sample_instance_to_mixer(music_loop, al_get_default_mixer());
+        al_attach_sample_instance_to_mixer(on_jump, al_get_default_mixer());
+    }
     // end audio setting
 
     eq = al_create_event_queue();
@@ -211,7 +214,7 @@ int al_game_container(Game Container) {
     al_register_event_source(eq, al_get_display_event_source(display));
     al_register_event_source(eq, al_get_timer_event_source(timer));
 
-    al_play_sample_instance(music_loop);
+    if(Container.soundActive) al_play_sample_instance(music_loop);
 
     al_start_timer(timer);
 
@@ -240,7 +243,7 @@ int al_game_container(Game Container) {
                     case ALLEGRO_KEY_UP:
                         // only pull when playing
                         if(Container.isPlaying()) {
-                            al_play_sample_instance(on_jump); // play sound
+                            if(Container.soundActive) al_play_sample_instance(on_jump); // play sound
                             PappuConnect.pull(); // pull up
                         }
                         break;
