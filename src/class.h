@@ -71,6 +71,7 @@ struct Game {
             acceleration_perscore;
     int     elapsed_before = 0,
             elapsed = 0;
+    int     soundActive = 0;
     float   score_increment = 1,
             score_multiplexer = 1;
     bool    isWindowRedraw = false,

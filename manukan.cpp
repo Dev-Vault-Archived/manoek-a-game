@@ -91,6 +91,7 @@ int main(int argc, char **argv) {
     PappuPakia.acceleration_perscore = 6;
     PappuPakia.score_increment = 1;
     PappuPakia.score_multiplexer = 1;
+    PappuPakia.soundActive = 1;
 
     al_game_container(PappuPakia);
 
@@ -124,6 +125,7 @@ int al_game_container(Game Container) {
 
     if(!display) return -1; // if display cannot
 
+    al_set_window_title(display, "Manukan Bird - Game of Student");
     al_initialize_plugin();
     al_production_resourec_state();
 
@@ -210,7 +212,7 @@ int al_game_container(Game Container) {
     al_register_event_source(eq, al_get_display_event_source(display));
     al_register_event_source(eq, al_get_timer_event_source(timer));
 
-    al_play_sample_instance(music_loop);
+    if(Container.soundActive) al_play_sample_instance(music_loop);
 
     al_start_timer(timer);
 
@@ -239,7 +241,7 @@ int al_game_container(Game Container) {
                     case ALLEGRO_KEY_UP:
                         // only pull when playing
                         if(Container.isPlaying()) {
-                            al_play_sample_instance(on_jump); // play sound
+                            if(Container.soundActive) al_play_sample_instance(on_jump); // play sound
                             PappuConnect.pull(); // pull up
                         }
                         break;
