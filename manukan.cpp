@@ -242,6 +242,8 @@ int al_game_container(Game Container) {
                         PappuConnect.updateGravity();
                         break;
                     case 4:
+                        PappuConnect.forceAnimation = 0;
+                        PappuConnect.waitingPosition();
                         if(game_running_time%(FPS*5) == 0) Container.state = 1;
                         break;
                 }
@@ -283,7 +285,7 @@ int al_game_container(Game Container) {
                     break;
             }
 
-            if(Container.state != 4) as_element_drawer_animation<Pappu>(PappuConnect);
+            as_element_drawer_animation<Pappu>(PappuConnect);
 
             al_flip_display();
             al_clear_to_color(al_map_rgb(0, 0, 0));
