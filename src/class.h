@@ -152,6 +152,10 @@ struct Pappu {
             onPullTimer = 0;
         }
     }
+    void waitingPosition() {
+        pos.x = 472;
+        pos.y = 217;
+    }
     bool ollicationCheck(Element A, Image B) {
         if(!(pos.x + spriteW < A.x || A.x + B.W < pos.x || pos.y + spriteW < A.y || A.y + B.H < pos.y) || pos.y + spriteH < 0 || pos.y > HEIGHT) return true;
         else return false;
