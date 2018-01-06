@@ -1,7 +1,3 @@
-#include <string.h>
-#include <allegro5/allegro.h>
-#include "window.h"
-
 struct Element {
     // default element structure for every element on screen
     float           x = 0,
